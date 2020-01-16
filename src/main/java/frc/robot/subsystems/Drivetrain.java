@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DrivetrainConstants.*;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -47,6 +48,26 @@ public class Drivetrain extends SubsystemBase {
 
     leftEncoder = new Encoder(LEFT_ENCODER_A, LEFT_ENCODER_B);
     rightEncoder = new Encoder(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
+  }
+
+  public void arcadeDrive(double throttle, double twist, boolean squaredInputs) {
+    if (squaredInputs) {
+      throttle *= Math.abs(throttle);
+      twist *= Math.abs(twist);
+    }
+
+    double leftOutput = throttle + twist;
+    double rightOutput = throttle - twist;
+    
+    if (leftOutput > 1 || leftOutput < 1) {
+      leftOutput = Math.copySign(1, leftOutput);
+    }
+    if (rightOutput > 1 || rightOutput < 1) {
+      rightOutput = Math.copySign(1, rightOutput);
+    }
+
+    leftMaster.set(ControlMode.PercentOutput, leftOutput);
+    rightMaster.set(ControlMode.PercentOutput, rightOutput);
   }
 
   @Override
