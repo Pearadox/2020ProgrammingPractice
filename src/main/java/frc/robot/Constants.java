@@ -33,10 +33,10 @@ public final class Constants {
     public static final int RIGHT_ENCODER_A = 9;
     public static final int RIGHT_ENCODER_B = 8;
 
-    public static final double WHEEL_DIAMETER = Units.inchesToMeters(6.0d);
+    public static final double WHEEL_DIAMETER = Units.inchesToMeters(6.0d); // Meters
 
-    public static final double PULSES_PER_REVOLUTION = 256;
-    public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / PULSES_PER_REVOLUTION;
+    public static final double PULSES_PER_REVOLUTION = 256; // Encoder ticks per 2*pi rotation
+    public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / PULSES_PER_REVOLUTION; // Meters per pulse
   }
 
   public static final class ControlConstants {

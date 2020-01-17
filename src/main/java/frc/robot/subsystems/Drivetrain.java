@@ -12,8 +12,12 @@ import static frc.robot.Constants.DrivetrainConstants.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -29,6 +33,9 @@ public class Drivetrain extends SubsystemBase {
   private final Encoder leftEncoder;
   private final Encoder rightEncoder;
 
+  private final AHRS gyro;
+
+  private final DifferentialDriveOdometry odometry;
   /**
    * Creates a new Drivetrain.
    */
@@ -48,6 +55,14 @@ public class Drivetrain extends SubsystemBase {
 
     leftEncoder = new Encoder(LEFT_ENCODER_A, LEFT_ENCODER_B);
     rightEncoder = new Encoder(RIGHT_ENCODER_A, RIGHT_ENCODER_B);
+
+    leftEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+    rightEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+
+    gyro = new AHRS(SPI.Port.kMXP);
+
+    gyro.zeroYaw();
+    odometry = new DifferentialDriveOdometry(new Rotation2d());
   }
 
   public void arcadeDrive(double throttle, double twist, boolean squaredInputs) {
@@ -70,8 +85,12 @@ public class Drivetrain extends SubsystemBase {
     rightMaster.set(ControlMode.PercentOutput, rightOutput);
   }
 
+  public Rotation2d getAngle() {
+    return new Rotation2d(Math.toRadians(gyro.getYaw()));
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    odometry.update(getAngle(), leftEncoder.getDistance(), rightEncoder.getDistance());
   }
 }
