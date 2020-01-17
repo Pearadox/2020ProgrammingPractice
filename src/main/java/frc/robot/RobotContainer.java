@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  public Drivetrain drivetrain;
+  public final Drivetrain drivetrain;
 
   public Joystick joystick;
 

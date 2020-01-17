@@ -15,10 +15,16 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -65,6 +71,18 @@ public class Drivetrain extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(new Rotation2d());
   }
 
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    if (Math.abs(leftVolts) > MAX_VOLTAGE) {
+      leftVolts = Math.copySign(MAX_VOLTAGE, leftVolts);
+    }
+    if (Math.abs(rightVolts) > MAX_VOLTAGE) {
+      rightVolts = Math.copySign(MAX_VOLTAGE, rightVolts);
+    }
+
+    ((SpeedController) leftMaster).setVoltage(leftVolts);
+    ((SpeedController) rightMaster).setVoltage(rightVolts);
+  }
+
   public void arcadeDrive(double throttle, double twist, boolean squaredInputs) {
     if (squaredInputs) {
       throttle *= Math.abs(throttle);
@@ -92,8 +110,16 @@ public class Drivetrain extends SubsystemBase {
     rightMaster.set(ControlMode.PercentOutput, rightOutput);
   }
 
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
   public Rotation2d getAngle() {
     return new Rotation2d(Math.toRadians(gyro.getYaw()));
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
   }
 
   @Override

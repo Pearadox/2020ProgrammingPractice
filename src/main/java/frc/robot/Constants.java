@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.util.Units;
 
 /**
@@ -34,12 +35,16 @@ public final class Constants {
     public static final int RIGHT_ENCODER_B = 8;
 
     public static final double MAX_OUTPUT = 1.0d;
+    public static final double MAX_VOLTAGE = 12.0d;
     public static final double DEADBAND = 0.1d;
 
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(6.0d); // Meters
 
     public static final double PULSES_PER_REVOLUTION = 256; // Encoder ticks per 2*pi rotation
     public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / PULSES_PER_REVOLUTION; // Meters per pulse
+
+    public static final double TRACK_WIDTH = Units.feetToMeters(2.3);
+    public static final DifferentialDriveKinematics KINEMATICS = new DifferentialDriveKinematics(TRACK_WIDTH);
   }
 
   public static final class ControlConstants {
