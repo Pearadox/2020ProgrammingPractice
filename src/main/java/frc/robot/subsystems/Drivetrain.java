@@ -71,13 +71,20 @@ public class Drivetrain extends SubsystemBase {
       twist *= Math.abs(twist);
     }
 
+    if (Math.abs(throttle) <= DEADBAND) {
+      throttle = 0.0;
+    }
+    if (Math.abs(twist) <= DEADBAND) {
+      twist = 0.0;
+    }
+
     double leftOutput = throttle + twist;
     double rightOutput = throttle - twist;
     
-    if (leftOutput > 1 || leftOutput < 1) {
+    if (Math.abs(leftOutput) > MAX_OUTPUT) {
       leftOutput = Math.copySign(1, leftOutput);
     }
-    if (rightOutput > 1 || rightOutput < 1) {
+    if (Math.abs(rightOutput) > MAX_OUTPUT) {
       rightOutput = Math.copySign(1, rightOutput);
     }
 
