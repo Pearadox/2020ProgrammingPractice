@@ -45,4 +45,13 @@ public final class Constants {
   public static final class ControlConstants {
     public static final int DRIVER_ID = 0;
   }
+
+  public static final class MPAutoConstants {
+    public static final double kP = 0.3;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kV = 1 / Units.feetToMeters(13.25);
+    public static final double kA = 0;
+    public static final double kH = 0;
+  }
 }

@@ -36,6 +36,9 @@ public class Drivetrain extends SubsystemBase {
   private final AHRS gyro;
 
   private final DifferentialDriveOdometry odometry;
+
+  private double lastLeftEncoder;
+  private double lastRightEncoder;
   /**
    * Creates a new Drivetrain.
    */
@@ -92,12 +95,45 @@ public class Drivetrain extends SubsystemBase {
     rightMaster.set(ControlMode.PercentOutput, rightOutput);
   }
 
+  public void drive(double leftOutput, double rightOutput){
+    leftMaster.set(ControlMode.PercentOutput, leftOutput);
+    rightMaster.set(ControlMode.PercentOutput, rightOutput);
+  }
+
   public Rotation2d getAngle() {
     return new Rotation2d(Math.toRadians(gyro.getYaw()));
+  }
+
+  // Radians
+  public double getGyroYaw(){
+    return Math.toRadians(gyro.getYaw());
+  }
+
+  public void zeroGyro(){
+    gyro.zeroYaw();
+  }
+
+  public double getLeftEncoder(){
+    return leftEncoder.getDistance();
+  }
+
+  public double getRightEncoder(){
+    return rightEncoder.getDistance();
+  }
+
+  // Velocity in Meters/Second
+  public double getLVelocity(){
+    return (leftEncoder.getDistance() - lastLeftEncoder)/0.02;
+  }
+
+  public double getRVelocity(){
+    return (rightEncoder.getDistance() - lastRightEncoder)/0.02;
   }
 
   @Override
   public void periodic() {
     odometry.update(getAngle(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    lastLeftEncoder = leftEncoder.getDistance();
+    lastRightEncoder = rightEncoder.getDistance();
   }
 }
