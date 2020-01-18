@@ -9,6 +9,7 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 
+import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -64,6 +65,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return null;
+
+    return new FollowPath(drivetrain);
   }
 }

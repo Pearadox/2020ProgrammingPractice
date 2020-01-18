@@ -96,8 +96,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void drive(double leftOutput, double rightOutput){
-    leftMaster.set(ControlMode.PercentOutput, leftOutput);
-    rightMaster.set(ControlMode.PercentOutput, rightOutput);
+    // leftMaster.set(ControlMode.PercentOutput, leftOutput);
+    // rightMaster.set(ControlMode.PercentOutput, rightOutput);
   }
 
   public Rotation2d getAngle() {

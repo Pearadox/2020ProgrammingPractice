@@ -30,7 +30,7 @@ public class FollowPath extends CommandBase {
   double startTime;
   
   Drivetrain drivetrain;
-  SmartDashboard smartDashboard;
+  int trajIndex;
 
   double kV = MPAutoConstants.kV;
   double kA = MPAutoConstants.kA;
@@ -41,7 +41,7 @@ public class FollowPath extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
-    String fileName = "RtoL";
+    String fileName = "straight";
     try {
       MPTrajectory trajectory = new MPTrajectory(fileName);
       leftTrajectory = trajectory.leftTrajectory;
@@ -51,18 +51,18 @@ public class FollowPath extends CommandBase {
       e.printStackTrace();
     }
     
-    if (!smartDashboard.getKeys().contains("kV")) {
-      smartDashboard.putNumber("kV", kV);
+    if (!SmartDashboard.getKeys().contains("kV")) {
+      SmartDashboard.putNumber("kV", kV);
     }
 
-    if (!smartDashboard.getKeys().contains("kA")) {
-      smartDashboard.putNumber("kA", kA);
+    if (!SmartDashboard.getKeys().contains("kA")) {
+      SmartDashboard.putNumber("kA", kA);
     }
-    if (!smartDashboard.getKeys().contains("kP")) {
-      smartDashboard.putNumber("kP", kP);
+    if (!SmartDashboard.getKeys().contains("kP")) {
+      SmartDashboard.putNumber("kP", kP);
     }
-    if (!smartDashboard.getKeys().contains("kH")) {
-      smartDashboard.putNumber("kH", kH);
+    if (!SmartDashboard.getKeys().contains("kH")) {
+      SmartDashboard.putNumber("kH", kH);
     }
   }
 
@@ -72,26 +72,34 @@ public class FollowPath extends CommandBase {
   public void initialize() {
     drivetrain.zeroGyro();
     startTime = Timer.getFPGATimestamp();
-    // SmartDashboard.putNumber("kV", value)
+    kV = SmartDashboard.getNumber("kV", kV);
+    kA = SmartDashboard.getNumber("kA", kA);
+    kP = SmartDashboard.getNumber("kP", kP);
+    kH = SmartDashboard.getNumber("kH", kH);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     currentTime = Timer.getFPGATimestamp();
-    int trajIndex = (int)((currentTime - startTime)/0.02);
+    // increment the iterator
+    trajIndex = (int) Math.round((currentTime - startTime)/0.02);
+    if (trajIndex > leftTrajectory.size()) { return; }
+    //desired values
     double desiredHead = leftTrajectory.get(trajIndex).heading;
     double desiredLeftDistance = leftTrajectory.get(trajIndex).position;
     double desiredRightDistance = rightTrajectory.get(trajIndex).position;
-    double desiredLeftAcc = leftTrajectory.get(trajIndex).acceleration;
-    double desiredRightAcc = rightTrajectory.get(trajIndex).acceleration;
+    // double desiredLeftAcc = leftTrajectory.get(trajIndex).acceleration;
+    // double desiredRightAcc = rightTrajectory.get(trajIndex).acceleration;
     double desiredLeftVel = leftTrajectory.get(trajIndex).velocity;
     double desiredRightVel = rightTrajectory.get(trajIndex).velocity;
 
+    //current values
     double currentLeftDistance = drivetrain.getLeftEncoder();
     double currentRightDistance = drivetrain.getRightEncoder();
     double currentHeading = drivetrain.getGyroYaw();
 
+    //calculate outputs
     double leftOutput = kV * desiredLeftVel 
     + kA * desiredRightVel
     + kP * (desiredLeftDistance - currentLeftDistance)
@@ -102,6 +110,7 @@ public class FollowPath extends CommandBase {
     + kP * (desiredRightDistance - currentRightDistance)
     + kH * (desiredHead - currentHeading);
 
+    //integrate outputs
     drivetrain.drive(leftOutput, rightOutput);
 
   }
@@ -114,6 +123,9 @@ public class FollowPath extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (trajIndex >= leftTrajectory.size() - 1){
+      return true;
+    }
     return false;
   }
 }

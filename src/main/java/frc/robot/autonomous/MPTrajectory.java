@@ -23,27 +23,32 @@ public class MPTrajectory {
   public List<MPPoint> rightTrajectory = new ArrayList<>();
 
   public MPTrajectory(String fileName) throws IOException {
-    this(new File(fileName + "_left"), new File(fileName + "_right"));
+    this(new File("/home/lvuser/paths/" + fileName + "_left.csv"), new File("/home/lvuser/paths/" + fileName + "_right.csv"));
   }
 
   public MPTrajectory(File leftFile, File rightFile) throws IOException {
     BufferedReader leftReader = new BufferedReader(new FileReader(leftFile));
     BufferedReader rightReader = new BufferedReader(new FileReader(rightFile));
     String[] line;
-    while ((line = leftReader.readLine().split(",")) != null) {
+    String raw = leftReader.readLine();
+    while (raw != null) {
+      line = raw.split(",");
       double pos = Double.parseDouble(line[0]);
       double vel = Double.parseDouble(line[1]);
       double acc = Double.parseDouble(line[2]);
       double hea = Double.parseDouble(line[3]);
       leftTrajectory.add(new MPPoint(pos, vel, acc, hea));
+      raw = leftReader.readLine();
     }
-
-    while ((line = rightReader.readLine().split(",")) != null) {
-        double pos = Double.parseDouble(line[0]);
-        double vel = Double.parseDouble(line[1]);
-        double acc = Double.parseDouble(line[2]);
-        double hea = Double.parseDouble(line[3]);
-        rightTrajectory.add(new MPPoint(pos, vel, acc, hea));
+    raw = rightReader.readLine();
+    while (raw != null) {
+      line = raw.split(",");
+      double pos = Double.parseDouble(line[0]);
+      double vel = Double.parseDouble(line[1]);
+      double acc = Double.parseDouble(line[2]);
+      double hea = Double.parseDouble(line[3]);
+      rightTrajectory.add(new MPPoint(pos, vel, acc, hea));
+      raw = rightReader.readLine();
     }
 
     leftReader.close();
