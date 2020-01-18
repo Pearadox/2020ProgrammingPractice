@@ -36,7 +36,7 @@ public final class Constants {
     public static final double MAX_OUTPUT = 1.0d;
     public static final double DEADBAND = 0.1d;
 
-    public static final double WHEEL_DIAMETER = Units.inchesToMeters(6.0d); // Meters
+    public static final double WHEEL_DIAMETER = 0.5; // Feet
 
     public static final double PULSES_PER_REVOLUTION = 256; // Encoder ticks per 2*pi rotation
     public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / PULSES_PER_REVOLUTION; // Meters per pulse
@@ -50,7 +50,7 @@ public final class Constants {
     public static final double kP = 0.3;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kV = 1 / Units.feetToMeters(13.25);
+    public static final double kV = 1 / 13.;
     public static final double kA = 0;
     public static final double kH = 0;
   }

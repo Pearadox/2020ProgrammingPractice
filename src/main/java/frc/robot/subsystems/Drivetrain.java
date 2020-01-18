@@ -51,6 +51,10 @@ public class Drivetrain extends SubsystemBase {
     rightSlave1 = new VictorSPX(RIGHT_SLAVE1_CAN_ID);
     rightSlave2 = new VictorSPX(RIGHT_SLAVE2_CAN_ID);
 
+    rightMaster.setInverted(true);
+    rightSlave1.setInverted(true);
+    rightSlave2.setInverted(true);
+
     leftSlave1.follow(leftMaster);
     leftSlave2.follow(leftMaster);
     rightSlave1.follow(rightMaster);
@@ -96,8 +100,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void drive(double leftOutput, double rightOutput){
-    // leftMaster.set(ControlMode.PercentOutput, leftOutput);
-    // rightMaster.set(ControlMode.PercentOutput, rightOutput);
+    leftMaster.set(ControlMode.PercentOutput, leftOutput);
+    rightMaster.set(ControlMode.PercentOutput, rightOutput);
   }
 
   public Rotation2d getAngle() {
@@ -114,7 +118,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getLeftEncoder(){
-    return leftEncoder.getDistance();
+    return -leftEncoder.getDistance();
   }
 
   public double getRightEncoder(){
@@ -128,6 +132,13 @@ public class Drivetrain extends SubsystemBase {
 
   public double getRVelocity(){
     return (rightEncoder.getDistance() - lastRightEncoder)/0.02;
+  }
+
+  public void zeroEncoders(){
+    leftEncoder.reset();
+    rightEncoder.reset();
+    lastRightEncoder = 0;
+    lastLeftEncoder = 0;
   }
 
   @Override

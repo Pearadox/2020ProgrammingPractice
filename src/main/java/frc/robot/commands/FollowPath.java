@@ -41,7 +41,7 @@ public class FollowPath extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
-    String fileName = "straight";
+    String fileName = "sCurve";
     try {
       MPTrajectory trajectory = new MPTrajectory(fileName);
       leftTrajectory = trajectory.leftTrajectory;
@@ -76,6 +76,7 @@ public class FollowPath extends CommandBase {
     kA = SmartDashboard.getNumber("kA", kA);
     kP = SmartDashboard.getNumber("kP", kP);
     kH = SmartDashboard.getNumber("kH", kH);
+    drivetrain.zeroEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -110,6 +111,13 @@ public class FollowPath extends CommandBase {
     + kP * (desiredRightDistance - currentRightDistance)
     + kH * (desiredHead - currentHeading);
 
+    SmartDashboard.putNumber("leftOutput", leftOutput);
+    SmartDashboard.putNumber("rightOutput", rightOutput);
+    SmartDashboard.putNumber("pLeft", kP * (desiredLeftDistance - currentLeftDistance));
+    SmartDashboard.putNumber("pRight", kP * (desiredRightDistance - currentRightDistance));
+    SmartDashboard.putNumber("h", kH * (desiredHead - currentHeading));
+    SmartDashboard.putNumber("leftEncoder", drivetrain.getLeftEncoder());
+    SmartDashboard.putNumber("rightEncoder", drivetrain.getRightEncoder());
     //integrate outputs
     drivetrain.drive(leftOutput, rightOutput);
 
